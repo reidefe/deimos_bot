@@ -4,7 +4,7 @@
 To run the program:
 
 ````bash
-Poetry init $$ poetry shell
+Poetry init && poetry shell
 ````
 
 Concat requirements.txt to poetry and add :  
