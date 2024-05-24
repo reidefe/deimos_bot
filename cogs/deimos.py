@@ -41,8 +41,9 @@ class Deimos(commands.Cog):
         await self.context.send(f'Hi {_member.name},\n Welcome to the AI Ethical review Bot, what business '
                                 f'requirements are you looking to addres with AI?')
         while args:
-            res = user_agent(open_api_key=self.open_api_key, models='gpt-4', q=args)
-            await  self.context.send(f'{res}')
+            res = user_agent(open_api_key=self.open_api_key, model='gpt-4')
+            res.initiate_chat(message=args)
+            await self.context.send(f'{res}')
 
 
 async def setup(bot) -> None:
