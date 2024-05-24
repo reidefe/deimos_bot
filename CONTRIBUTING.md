@@ -1,45 +1,40 @@
-# Contributing Guidelines
+# Deimos AI Bot 
+###  This is a bot deployable to platforms ranging from Telegram, Slack and also discord
 
-Your input is amazing! Making contributing to this project as easy and transparent as possible is one of the most important side, this includes:
+To run the program:
 
--   Reporting a bug
--   Discussing the current state of the code
--   Submitting a fix
--   Proposing new features
--   Becoming a maintainer
+````bash
+Poetry init $$ poetry shell
+````
 
-## Wanted changes
+Concat requirements.txt to poetry and add :  
 
--   New features
--   Better documentation
--   Fixing of spelling and grammatical issues
+````bash
+cat requirements.txt | xargs poetry add
 
-## Unwanted changes
+````
 
--   Whitespaces and punctuation changes
--   Word changes using synonyms
--   Entire rewrites of the project, or parts of the project - unless approved first by a maintainer
+or: 
 
-## All code changes happen through pull requests
+````bash
 
-Pull requests are the best way to propose changes to the codebase. We actively welcome your pull requests:
+poetry add $(cat requirements.txt)
 
-1. Fork the repo and create your branch from `main`.
-2. Keep consistency with the current state of the codebase, this includes but is not limited to naming convention, Discord embeds, etc.
-3. Format the code of the **Python** files you've edited with the **black** formatter and **all others** with the **Prettier** formatter.
-4. Sort the imports with `isort`
-5. Issue that pull request!
+````
+install dependencies:
+````bash
+Poetry install
+````
 
-## Commit messages guidelines
+Then install package dependencies:
+````bash
+Python bot.py
+````
 
-This project uses [`Conventional Commits 1.0.0`](https://conventionalcommits.org/en/v1.0.0/) hence your commit messages **must** follow the same convention or your contributions will be ignored, refused or assigned to another user or maintainer.
 
-It would be more than welcome to keep your contributions as a single commit rather than, for examples, 20 `"fix: Stuff"` commits in-between. You may use multiple commmits if you believe the changes made in these commmits have nothing, or close to nothing, in common - feel free to ask a maintainer on whether or not it should be a single commit or not.
+#### Config.json contains the target deployment platform config credentials
 
-## Create a GitHub [Issue](https://github.com/kkrypt0nn/Python-Discord-Bot-Template/issues) and **then** a pull request
+#### Services contains different AI services implemented to help automate chat flow
 
-Start contributing by first [opening a new issue](https://github.com/kkrypt0nn/Python-Discord-Bot-Template/issues/new/choose). Once that is done, you can create a pull request for the issue.
+#### Cogs file contains the discord bot implementation
 
-## License
-
-Your submissions are understood to be under the same [Apache License 2.0](https://github.com/kkrypt0nn/Python-Discord-Bot-Template/blob/main/LICENSE.md) that covers the project.
