@@ -1,26 +1,22 @@
-import json, os
-
-import loguru
-from discord import app_commands
+import discord
+import os
+from dotenv import  load_dotenv
 from discord.ext import commands
 import discord
 from discord.ext.commands import Context
-import requests
-from dotenv import load_dotenv
-from services.agents import user_agent
-from services.tools import create_file
+# from services.agents import user_agent
+from  .agents import user_agent
 
 intents = discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
-bot_0 = commands.Bot(command_prefix='!', intents=intents)
+bot= commands.Bot(command_prefix='!', intents=intents)
 
 
 class Deimos(commands.Cog, name='Deimos'):
     """
     handles  discord api server api calls using user input
     """
-
     def __int__(self, bot, channel: discord.TextChannel, member: discord.Member, user: discord.User, stop_loss,
                 context: Context):
         load_dotenv()
@@ -30,7 +26,7 @@ class Deimos(commands.Cog, name='Deimos'):
         self.open_api_key = os.getenv("OPENAI_API_KEY")
         self.context = context
 
-    @commands.command(name='start_review')
+    @bot.command(name='start_review')
     async def start_review(self, *args):
         """
         Handle discord bot AI review call
@@ -48,5 +44,4 @@ class Deimos(commands.Cog, name='Deimos'):
             await self.context.send(f'{res}')
 
 
-async def setup(bot) -> None:
-    await bot.add_cog(Deimos(bot))
+bot.run(os.getenv('DISCORD_TOKEN'))
