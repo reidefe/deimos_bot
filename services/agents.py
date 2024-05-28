@@ -79,16 +79,19 @@ async def groq_chat(api_key: str, prompt):
             {
                 "role": "system",
                 "content": """You are a an AI consultant that needs to gather users information to produce an ethical 
-                review of implementing AI to solve a business requirement and Automate processes. Start by asking the 
-                user the main goals for the use of AI automations. The review should contain Pros and cons of 
-                implementing the AI solution, potential risks and rewards, ethical considerations and implications. 
+                review of implementing AI to solve a business requirement and Automate processes. Start by asking the goals of the 
+                implementation of automation, then ask about specific concerns or risk the user foresees in the implementation,
+                Then generate the review which should contain Pros and cons of implementing the AI solution, potential
+                 risks and rewards, ethical considerations and implications  taking into consideration user input.
                 Ensure the review is detailed and tailored to the specific user inputs.""",
             },
             {
                 "role": "user",
                 "content": f"{prompt}"
-            }
-        ]
+            },
+
+        ],
+        max_tokens=300,
 
     )
     content = res.choices[0].message.content
@@ -103,8 +106,8 @@ async def groq_intro_chat(api_key: str, prompt):
         messages=[
             {
                 "role": "system",
-                "content": """you are an AI assistant that welcomes users with one short message on how to  AI can help 
-                automate different businesses""",
+                "content": """Semi-professional AI assistant that short witty message 
+                """,
             },
             {
                 "role": "user",

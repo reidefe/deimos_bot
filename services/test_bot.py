@@ -5,11 +5,11 @@ import loguru
 from dotenv import load_dotenv
 from discord.ext import commands
 import discord
-from tools import split_text
+from tools import split_text, create_file
 from discord.ext.commands import Context
 # from services.agents import user_agent, user_chat
 from agents import user_agent, user_chat, anthropic_chat, groq_chat, groq_intro_chat
-
+import asyncio
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -17,7 +17,7 @@ intents.guild_messages = True
 intents.dm_messages = True
 intents.messages = True
 
-client = discord.Client(command_prefix='!', intents=intents)
+client = discord.Client(command_prefix='!start_review', intents=intents)
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 
@@ -30,20 +30,20 @@ async def on_message(message):
     """
     if message.author == client.user:
         return
-    if message.content.startswith('!start_review'):
-        question = message.content
-        r = question.split(' ', 1)
-        res = await groq_chat(api_key=os.getenv('GROQ_KEY'), prompt=f'{r}')
-        if res.__len__() > 2000:
-            substrings = split_text(input_string=res)
-            for string in substrings:
-                await message.channel.send(f' {string}')
-        await message.channel.send(f' {res}')
-        return
+    # if message.content.startswith('!start_review'):
+    question = message.content
+    r = question.split(' ', 1)
+    res = await groq_chat(api_key=os.getenv('GROQ_KEY'), prompt=f'{question}')
 
-    res = await groq_intro_chat(api_key=os.getenv('GROQ_KEY'), prompt=f'{message.content}')
+    await message.channel.send(f' {res}')
 
-    await message.channel.send(f' {res} \n write !start_review to commence review')
+
+# @bot.command(name='start_review')
+# async def start_review(ctx, args):
+#
+#     res = await groq_chat(api_key=os.getenv('GROQ_KEY'), prompt=f'{args}')
+#
+#     await ctx.send(f' {res}')
 
 
 @client.event
@@ -68,4 +68,10 @@ async def on_guild_join(guild):
 
 
 load_dotenv()
-client.run(os.getenv('DISCORD_TOKEN'))
+# client_1.run(os.getenv('DISCORD_TOKEN'))
+
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+loop.create_task(client.start(os.getenv('DISCORD_TOKEN')))
+loop.create_task(bot.start(os.getenv('DISCORD_TOKEN')))
+loop.run_forever()
