@@ -68,10 +68,10 @@ async def on_guild_join(guild):
 
 
 load_dotenv()
-# client_1.run(os.getenv('DISCORD_TOKEN'))
-
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-loop.create_task(client.start(os.getenv('DISCORD_TOKEN')))
-loop.create_task(bot.start(os.getenv('DISCORD_TOKEN')))
-loop.run_forever()
+client.run(os.getenv('DISCORD_TOKEN'))
+#
+# loop = asyncio.new_event_loop()
+# asyncio.set_event_loop(loop)
+# loop.create_task(client.start(os.getenv('DISCORD_TOKEN')))
+# loop.create_task(bot.start(os.getenv('DISCORD_TOKEN')))
+# loop.run_forever()
