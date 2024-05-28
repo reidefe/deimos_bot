@@ -1,47 +1,71 @@
 import discord
 import os
-from dotenv import  load_dotenv
+
+import loguru
+from dotenv import load_dotenv
 from discord.ext import commands
 import discord
+from tools import split_text
 from discord.ext.commands import Context
-# from services.agents import user_agent
-from  .agents import user_agent
+# from services.agents import user_agent, user_chat
+from agents import user_agent, user_chat, anthropic_chat, groq_chat, groq_intro_chat
 
-intents = discord.Intents.all()
+intents = discord.Intents.default()
 intents.message_content = True
-client = discord.Client(intents=intents)
-bot= commands.Bot(command_prefix='!', intents=intents)
+intents.members = True
+intents.guild_messages = True
+intents.dm_messages = True
+intents.messages = True
+
+client = discord.Client(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 
-class Deimos(commands.Cog, name='Deimos'):
+@client.event
+async def on_message(message):
     """
-    handles  discord api server api calls using user input
+    Handles chat with user directly
+    :params
+    :message:
     """
-    def __int__(self, bot, channel: discord.TextChannel, member: discord.Member, user: discord.User, stop_loss,
-                context: Context):
-        load_dotenv()
-        self.bot = bot
-        self.member = member
-        self.user = user
-        self.open_api_key = os.getenv("OPENAI_API_KEY")
-        self.context = context
+    if message.author == client.user:
+        return
+    if message.content.startswith('!start_review'):
+        question = message.content
+        r = question.split(' ', 1)
+        res = await groq_chat(api_key=os.getenv('GROQ_KEY'), prompt=f'{r}')
+        if res.__len__() > 2000:
+            substrings = split_text(input_string=res)
+            for string in substrings:
+                await message.channel.send(f' {string}')
+        await message.channel.send(f' {res}')
+        return
 
-    @bot.command(name='start_review')
-    async def start_review(self, *args):
-        """
-        Handle discord bot AI review call
-        :return:
-        """
-        if not self.member:
-            _member = self.context.guild.get_member(self.user.id) or await self.context.guild.fetch_member(self.user.id)
+    res = await groq_intro_chat(api_key=os.getenv('GROQ_KEY'), prompt=f'{message.content}')
 
-        _member = self.member
-        await self.context.send(f'Hi {_member.name},\n Welcome to the AI Ethical review Bot, what business '
-                                f'requirements are you looking to addres with AI?')
-        while args:
-            res = user_agent(open_api_key=self.open_api_key, model='gpt-4')
-            res.initiate_chat(message=args)
-            await self.context.send(f'{res}')
+    await message.channel.send(f' {res} \n write !start_review to commence review')
 
 
-bot.run(os.getenv('DISCORD_TOKEN'))
+@client.event
+async def on_guild_join(guild):
+    """
+    Send a message to the guild/server
+    """
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            embedHi = discord.Embed(
+                title="Thanks for adding me!",
+                description="AI bot that performs business review forethical AI implementation",
+                colour=discord.Colour.red())
+            embedHi.set_thumbnail(
+                url="https://cdn.pixabay.com/photo/2017/12/13/16/01/brain-3017071_1280.png"
+            )
+            embedHi.set_image(url="image url")
+            embedHi.set_footer(
+                text="© Reidefe - The Greate - AI bot for reviews")
+            await channel.send(embed=embedHi)
+        break
+
+
+load_dotenv()
+client.run(os.getenv('DISCORD_TOKEN'))
